@@ -23,6 +23,8 @@
   var lives = 3;
   var livesText;
   var lifeLostText;
+  var playing = false;
+  var startButton;
 
 
   function preload() {
@@ -34,6 +36,7 @@
       game.load.image('paddle', 'img/fish.png');
       game.load.image('brick', 'img/ga1.png');
       game.load.image('background', 'img/khoifish.jpg' );
+      game.load.spritesheet('button', 'img/button.png', 120, 40);
   }
   function create() {
       game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -62,6 +65,10 @@
       lifeLostText = game.add.text(game.world.width*0.5, game.world.height*0.5, 'Life lost, tap to continue', textStyle);
       lifeLostText.anchor.set(0.5);
       lifeLostText.visible = false;
+
+
+      startButton = game.add.button(game.world.width*0.5, game.world.height*0.5, 'button', startGame, this, 1, 0, 2);
+      startButton.anchor.set(0.5);
   }
   function update() {
       game.physics.arcade.collide(ball, paddle);
@@ -96,7 +103,12 @@
       }
   }
   function ballHitBrick(ball, brick) {
+    var killTween = game.add.tween(brick.scale);
+    killTween.to({x:0,y:0}, 200, Phaser.Easing.Linear.None);
+    killTween.onComplete.addOnce(function(){
       brick.kill();
+      }, this);
+      killTween.start();
       score += 10;
       scoreText.setText('Points: '+score);
       if(score === brickInfo.count.row*brickInfo.count.col*10) {
@@ -121,6 +133,7 @@
           location.reload();
       }
   }
+  
   </script>
   </body>
   </html>
